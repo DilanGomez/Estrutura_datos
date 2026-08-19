@@ -6,6 +6,8 @@ Una bolsa almacena elementos permitiendo repeticiones, sin orden definido.
 ## 2. Fuera de alcance
 <¿Qué NO hace? Por ejemplo: no mantiene orden de inserción, no permite indexar>
 
+d
+
 ## 3. Operaciones
 
 ### agregar(elemento)
@@ -46,3 +48,4 @@ Una bolsa almacena elementos permitiendo repeticiones, sin orden definido.
 - Un solo elemento
 - Elemento repetido muchas veces
 - Sacar el último ejemplar de un elemento
+
