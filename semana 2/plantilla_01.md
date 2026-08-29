@@ -109,14 +109,13 @@ Una bolsa es una estructura de datos que almacena elementos permitiendo repetici
 
 ## 5. Criterios de aceptación
 
-| ID    | Criterio                                                             | Prueba que lo verifica             |
-| ----- | -------------------------------------------------------------------- | ---------------------------------- |
-| CA-01 | Una bolsa recién creada tiene tamaño 0                               | test_bolsa_vacia                   |
-| CA-02 | Agregar el mismo elemento dos veces hace que cuantos() devuelva 2    | test_duplicados                    |
-| CA-03 | Sacar un elemento inexistente lanza ElementoNoEncontradoError        | test_sacar_inexistente             |
-| CA-04 | Sacar un elemento existente reduce la cantidad y el tamaño en 1      | test_sacar_reduce_cantidad         |
-| CA-05 | Consultar un elemento inexistente devuelve 0                         | test_cantidad_producto_inexistente |
-| CA-06 | El tamaño siempre coincide con la suma de las cantidades almacenadas | test_invariante_tamaño             |
+ID	Criterio	                                                             Prueba que lo verifica
+CA-01	Una bolsa recién creada tiene tamaño 0	                             test_bolsa_vacia
+CA-02	Agregar el mismo elemento dos veces hace que cuantos() devuelva 2	 test_duplicados
+CA-03	Sacar un elemento inexistente lanza ElementoNoEncontradoError	     test_sacar_inexistente
+CA-04	Sacar un elemento existente reduce la cantidad y el tamaño en 1                                                                       test_sacar_reduce_cantidad
+CA-05	Consultar un elemento inexistente devuelve 0	          test_cantidad_producto_inexistente
+CA-06	El tamaño siempre coincide con la suma de las cantidades almacenadas          |                                                     test_invariante_tamaño
 
 ## 6. Casos extremos considerados
 
