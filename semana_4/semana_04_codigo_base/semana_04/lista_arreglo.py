@@ -1,29 +1,20 @@
 # Código base — Semana 04
-# Fuente: 01-Momento-1-Contrato-y-secuencia/04-Semana-04-Arreglos-y-estructuras-estaticas/02-guia-de-laboratorio.html
-
-from array import array
-
+# Adaptado para el ejercicio de búsqueda lineal y binaria
 
 class PosicionInvalidaError(IndexError):
     """La posición solicitada está fuera del rango válido."""
 
 
 class ListaArreglo:
-    """Lista implementada sobre un arreglo de tamaño fijo con redimensionamiento.
-
-    Atributos internos:
-        _datos      arreglo subyacente (capacidad fija en cada momento)
-        _capacidad  cuántas posiciones tiene el arreglo
-        _tamaño     cuántas posiciones están realmente ocupadas
-
-    Invariante de representación: 0 <= _tamaño <= _capacidad
+    """Lista implementada sobre un arreglo con redimensionamiento.
 
     Complejidad:
         obtener          -> O(1)
         insertar(final)  -> O(1) amortizado
         insertar(inicio) -> O(n)
-        eliminar         -> O(n)
-        buscar           -> O(n)
+        insertar_ordenado -> O(n)
+        buscar_lineal    -> O(n)
+        buscar_binaria   -> O(log n)
     """
 
     CAPACIDAD_INICIAL = 4
@@ -31,67 +22,100 @@ class ListaArreglo:
     def __init__(self):
         self._capacidad = self.CAPACIDAD_INICIAL
         self._datos = [None] * self._capacidad
-        self._datos[0] = 9
-        self._datos[1] = 98
-        self._tamano = 0
+        self._tamaño = 0
 
     # ---------- operaciones públicas ----------
 
-    def tamano(self):
-        contador = 0
-        while self._datos[contador]:
-            contador = contador + 1
-        self._tamano = contador
-        return contador
-
-    def obtener(self, posicion):
-        """Devuelve el elemento en `posicion`. O(1)."""
-        self._validar(posicion, incluir_final=False)
-        return self.datos[posicion]
-        
+    def tamaño(self):
+        """Devuelve la cantidad de elementos almacenados."""
+        return self._tamaño
 
     def insertar(self, posicion, elemento):
-        """Inserta desplazando los elementos siguientes hacia la derecha."""
+        """Inserta un elemento en una posición y desplaza los siguientes."""
         self._validar(posicion, incluir_final=True)
-        if self._tamano == self._capacidad:
+
+        if self._tamaño == self._capacidad:
             self._redimensionar(self._capacidad * 2)
-        # Desplaza desde el FINAL hacia atrás. ¿Por qué desde el final?
-        # Si lo haces desde el principio, sobrescribes los datos.
+
+        # Se desplaza desde el final para no sobrescribir elementos.
+        i = self._tamaño
+        while i > posicion:
+            self._datos[i] = self._datos[i - 1]
+            i = i - 1
+
         self._datos[posicion] = elemento
-        
+        self._tamaño = self._tamaño + 1
 
-    def eliminar(self, posicion):
-        """Elimina y devuelve el elemento, desplazando los siguientes."""
+    def insertar_ordenado(self, elemento):
+        """Inserta el elemento conservando el orden ascendente."""
+        izquierda = 0
+        derecha = self._tamaño
+
+        # Primero encuentra la posición con búsqueda binaria.
+        while izquierda < derecha:
+            medio = (izquierda + derecha) // 2
+
+            if self._datos[medio] < elemento:
+                izquierda = medio + 1
+            else:
+                derecha = medio
+
+        self.insertar(izquierda, elemento)
+
+    def obtener(self, posicion):
+        """Devuelve el elemento almacenado en la posición indicada."""
         self._validar(posicion, incluir_final=False)
+        return self._datos[posicion]
 
-        eliminar1=self._datos[posicion]
-        for i in range(posicion, self._tamano - 1):
-            self._datos[i] = self._datos[i + 1]
+    def buscar_lineal(self, elemento):
+        """Busca recorriendo los elementos desde el principio."""
+        for i in range(self._tamaño):
+            if self._datos[i] == elemento:
+                return i
+        return -1
 
-            self._datos[self._tamano - 1] = None
+    def buscar_binaria(self, elemento):
+        """Busca un elemento mediante búsqueda binaria.
 
-          
+        La lista debe estar ordenada de menor a mayor.
+        """
+        izquierda = 0
+        derecha = self._tamaño - 1
 
-    
+        while izquierda <= derecha:
+            medio = (izquierda + derecha) // 2
 
-        pass
+            if self._datos[medio] == elemento:
+                return medio
 
-    def buscar(self, elemento):
-        
-        pass
+            if self._datos[medio] < elemento:
+                izquierda = medio + 1
+            else:
+                derecha = medio - 1
+
+        return -1
 
     # ---------- auxiliares ----------
 
     def _validar(self, posicion, incluir_final):
-        limite = self._tamano if incluir_final else self._tamano - 1
+        limite = self._tamaño if incluir_final else self._tamaño - 1
+
         if not 0 <= posicion <= limite:
             raise PosicionInvalidaError(
                 f"posicion {posicion} fuera de rango [0, {limite}]"
             )
 
     def _redimensionar(self, nueva_capacidad):
-        """Crea un arreglo mayor y copia los elementos. O(n)."""
-        pass
+        """Crea un arreglo mayor y copia los elementos."""
+        nuevos_datos = [None] * nueva_capacidad
+
+        i = 0
+        while i < self._tamaño:
+            nuevos_datos[i] = self._datos[i]
+            i = i + 1
+
+        self._datos = nuevos_datos
+        self._capacidad = nueva_capacidad
 
     # ---------- protocolo de Python ----------
 
@@ -106,9 +130,4 @@ class ListaArreglo:
             yield self._datos[i]
 
     def __repr__(self):
-        return f"ListaArreglo({list(self)!r})"
-
-
-
-
-l1 = ListaArreglo()
+        return f"ListaArreglo({[x for x in self]!r})"
